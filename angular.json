@@ -142,6 +142,113 @@
           }
         }
       }
+    },
+    "myapi": {
+      "root": "apps/myapi",
+      "sourceRoot": "apps/myapi/src",
+      "projectType": "application",
+      "prefix": "myapi",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@flowaccount/nx-serverless:build",
+          "options": {
+            "outputPath": "dist/apps/myapi",
+            "package": "apps/myapi",
+            "serverlessConfig": "apps/myapi/serverless.yml",
+            "servicePath": "apps/myapi",
+            "tsConfig": "apps/myapi/tsconfig.app.json",
+            "provider": "aws",
+            "processEnvironmentFile": "env.json"
+          },
+          "configurations": {
+            "dev": {
+              "optimization": false,
+              "sourceMap": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            },
+            "production": {
+              "optimization": true,
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/myapi/environment.ts",
+                  "with": "apps/myapi/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@flowaccount/nx-serverless:offline",
+          "options": {
+            "buildTarget": "myapi:build",
+            "config": "apps/myapi/serverless.yml",
+            "location": "dist/apps/myapi"
+          },
+          "configurations": {
+            "dev": {
+              "buildTarget": "myapi:build:dev"
+            },
+            "production": {
+              "buildTarget": "myapi:build:production"
+            }
+          }
+        },
+        "deploy": {
+          "builder": "@flowaccount/nx-serverless:deploy",
+          "options": {
+            "buildTarget": "myapi:build:production",
+            "config": "apps/myapi/serverless.yml",
+            "location": "dist/apps/myapi",
+            "package": "dist/apps/myapi"
+          }
+        },
+        "destroy": {
+          "builder": "@flowaccount/nx-serverless:destroy",
+          "options": {
+            "buildTarget": "myapi:build:production",
+            "config": "apps/myapi/serverless.yml",
+            "location": "dist/apps/myapi",
+            "package": "dist/apps/myapi"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/myapi/tsconfig.app.json",
+              "apps/myapi/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/myapi/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/myapi"],
+          "options": {
+            "jestConfig": "apps/myapi/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
