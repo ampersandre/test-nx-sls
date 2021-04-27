@@ -152,185 +152,21 @@
         }
       }
     },
-    "myapi": {
-      "root": "apps/myapi",
-      "sourceRoot": "apps/myapi/src",
-      "projectType": "application",
-      "prefix": "myapi",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@flowaccount/nx-serverless:build",
-          "options": {
-            "outputPath": "dist/apps/myapi",
-            "package": "apps/myapi",
-            "serverlessConfig": "apps/myapi/serverless.yml",
-            "servicePath": "apps/myapi",
-            "tsConfig": "apps/myapi/tsconfig.app.json",
-            "provider": "aws",
-            "processEnvironmentFile": "env.json"
-          },
-          "configurations": {
-            "dev": {
-              "optimization": false,
-              "sourceMap": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
-            },
-            "production": {
-              "optimization": true,
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "apps/myapi/environment.ts",
-                  "with": "apps/myapi/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@flowaccount/nx-serverless:offline",
-          "options": {
-            "buildTarget": "myapi:build",
-            "config": "apps/myapi/serverless.yml",
-            "location": "dist/apps/myapi"
-          },
-          "configurations": {
-            "dev": {
-              "buildTarget": "myapi:build:dev"
-            },
-            "production": {
-              "buildTarget": "myapi:build:production"
-            }
-          }
-        },
-        "deploy": {
-          "builder": "@flowaccount/nx-serverless:deploy",
-          "options": {
-            "buildTarget": "myapi:build:production",
-            "config": "apps/myapi/serverless.yml",
-            "location": "dist/apps/myapi",
-            "package": "dist/apps/myapi"
-          }
-        },
-        "destroy": {
-          "builder": "@flowaccount/nx-serverless:destroy",
-          "options": {
-            "buildTarget": "myapi:build:production",
-            "config": "apps/myapi/serverless.yml",
-            "location": "dist/apps/myapi",
-            "package": "dist/apps/myapi"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/myapi/tsconfig.app.json",
-              "apps/myapi/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/myapi/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/myapi"
-          ],
-          "options": {
-            "jestConfig": "apps/myapi/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "nest-api": {
       "root": "apps/nest-api",
       "sourceRoot": "apps/nest-api/src",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "builder": "@flowaccount/nx-serverless:build",
           "options": {
             "outputPath": "dist/apps/nest-api",
-            "main": "apps/nest-api/src/main.ts",
-            "tsConfig": "apps/nest-api/tsconfig.app.json",
-            "assets": [
-              "apps/nest-api/src/assets"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/nest-api/src/environments/environment.ts",
-                  "with": "apps/nest-api/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "nest-api:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "apps/nest-api/**/*.ts"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/nest-api"
-          ],
-          "options": {
-            "jestConfig": "apps/nest-api/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "compile": {
-          "builder": "@flowaccount/nx-serverless:compile",
-          "options": {
-            "outputPath": "dist",
             "package": "apps/nest-api",
             "serverlessConfig": "apps/nest-api/serverless.yml",
             "servicePath": "apps/nest-api",
-            "tsConfig": "apps/nest-api/tsconfig.serverless.json",
+            "tsConfig": "apps/nest-api/tsconfig.app.json",
             "provider": "aws",
-            "processEnvironmentFile": "env.json",
-            "skipClean": true
+            "processEnvironmentFile": "env.json"
           },
           "configurations": {
             "dev": {
@@ -367,34 +203,26 @@
             }
           }
         },
-        "offline": {
+        "serve": {
           "builder": "@flowaccount/nx-serverless:offline",
           "options": {
-            "waitUntilTargets": [
-              "nest-api:build",
-              "nest-api:server"
-            ],
-            "buildTarget": "nest-api:compile",
+            "buildTarget": "nest-api:build",
             "config": "apps/nest-api/serverless.yml",
             "location": "dist/apps/nest-api"
           },
           "configurations": {
             "dev": {
-              "buildTarget": "nest-api:compile:dev"
+              "buildTarget": "nest-api:build:dev"
             },
             "production": {
-              "buildTarget": "nest-api:compile:production"
+              "buildTarget": "nest-api:build:production"
             }
           }
         },
         "deploy": {
           "builder": "@flowaccount/nx-serverless:deploy",
           "options": {
-            "waitUntilTargets": [
-              "nest-api:build:production",
-              "nest-api:server:production"
-            ],
-            "buildTarget": "nest-api:compile:production",
+            "buildTarget": "nest-api:build:production",
             "config": "apps/nest-api/serverless.yml",
             "location": "dist/apps/nest-api",
             "package": "dist/apps/nest-api"
@@ -403,10 +231,28 @@
         "destroy": {
           "builder": "@flowaccount/nx-serverless:destroy",
           "options": {
-            "buildTarget": "nest-api:compile:production",
+            "buildTarget": "nest-api:build:production",
             "config": "apps/nest-api/serverless.yml",
             "location": "dist/apps/nest-api",
             "package": "dist/apps/nest-api"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/nest-api/tsconfig.app.json",
+              "apps/nest-api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/nest-api/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/nest-api"],
+          "options": {
+            "jestConfig": "apps/nest-api/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

@@ -5,6 +5,8 @@
     "types": ["node"],
     "module": "commonjs"
   },
-  "files": ["handler.ts"],
+  "files": [
+    "handler.ts"
+  ],
   "include": []
 }

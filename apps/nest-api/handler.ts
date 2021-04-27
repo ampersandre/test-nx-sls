@@ -1,34 +1,29 @@
+import { APIGatewayProxyHandler } from 'aws-lambda';
 import { createServer, proxy } from 'aws-serverless-express';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './src/app/app.module';
 import { eventContext } from 'aws-serverless-express/middleware';
-const app = require('./server/main').app;
+import { Server } from 'http';
+import * as express from 'express';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
 
-const binaryMimeTypes = [
-  'application/javascript',
-  'application/json',
-  'application/octet-stream',
-  'application/xml',
-  'font/ttf',
-  'font/eot',
-  'font/opentype',
-  'font/otf',
-  'image/jpeg',
-  'image/png',
-  'image/svg+xml',
-  'text/comma-separated-values',
-  'text/css',
-  'text/html',
-  'text/javascript',
-  'text/plain',
-  'text/text',
-  'text/xml'
-]
+let cachedServer: Server;
 
-let serverInstance;
-if (serverInstance === undefined){
-  const server = app();
-  server.use(eventContext());
-  serverInstance = createServer(server, null, binaryMimeTypes)
+async function bootstrapServer() {
+  const expressApp = express();
+  const adapter = new ExpressAdapter(expressApp);
+  const app = await NestFactory.create(AppModule, adapter);
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix);
+  app.use(eventContext());
+  await app.init();
+  return createServer(expressApp);
 }
 
-export const webApp = (event, context) => { proxy(serverInstance, event, context) }
+export const webApp: APIGatewayProxyHandler = async (event, context) => {
+  if (!cachedServer) {
+    cachedServer = await bootstrapServer();
+  }
+  return proxy(cachedServer, event, context, 'PROMISE').promise;
+}
