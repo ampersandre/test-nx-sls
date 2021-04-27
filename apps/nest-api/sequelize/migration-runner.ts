@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
-import { Umzug, SequelizeStorage } from 'umzug';
+import * as Umzug from 'umzug';
 import pg from 'pg';
+import * as path from 'path';
 
 
 const sequelize = new Sequelize({
@@ -14,11 +15,18 @@ const sequelize = new Sequelize({
 });
 
 const umzug = new Umzug({
-  migrations: { glob: './migrations/*.js' },
-  context: sequelize.getQueryInterface(),
-  storage: new SequelizeStorage({ sequelize }),
-  logger: console,
-})
+  migrations: {
+    path: path.join(__dirname, './migrations'),
+    params: [
+      sequelize.getQueryInterface()
+    ]
+  },
+  logging: console.log,
+  storage: 'sequelize',
+  storageOptions: {
+    sequelize: sequelize
+  }
+});
 
 export const migrationsUp = (async (event) => {
   await umzug.up();
@@ -26,7 +34,7 @@ export const migrationsUp = (async (event) => {
     executed: await umzug.executed(),
     pending: await umzug.pending(),
   });
-})();
+});
 
 export const migrationsDown = (async (event) => {
   await umzug.down();
@@ -34,7 +42,7 @@ export const migrationsDown = (async (event) => {
     executed: await umzug.executed(),
     pending: await umzug.pending(),
   });
-})();
+});
 
 export const migrationsStatus = (async (event) => {
   await umzug.pending();
@@ -42,5 +50,5 @@ export const migrationsStatus = (async (event) => {
     executed: await umzug.executed(),
     pending: await umzug.pending(),
   });
-})();
+});
 
