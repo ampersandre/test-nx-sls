@@ -3,7 +3,7 @@
   "cli": {
     "defaultCollection": "@nrwl/angular"
   },
-  "defaultProject": "sample",
+  "defaultProject": "nest-api",
   "schematics": {
     "@nrwl/angular": {
       "application": {
@@ -156,6 +156,8 @@
       "root": "apps/nest-api",
       "sourceRoot": "apps/nest-api/src",
       "projectType": "application",
+      "prefix": "nest-api",
+      "schematics": {},
       "architect": {
         "build": {
           "builder": "@flowaccount/nx-serverless:build",
