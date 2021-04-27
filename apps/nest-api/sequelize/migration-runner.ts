@@ -1,9 +1,11 @@
 import { Sequelize } from 'sequelize';
 import { Umzug, SequelizeStorage } from 'umzug';
+import pg from 'pg';
 
 
 const sequelize = new Sequelize({
   dialect: 'postgres',
+  dialectModule: pg,
   host: process.env.PG_HOST,
   port: 5432,
   username: process.env.PG_USERNAME,
