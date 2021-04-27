@@ -162,6 +162,7 @@
         "build": {
           "builder": "@flowaccount/nx-serverless:build",
           "options": {
+            "assets": ["apps/nest-api/src/assets"],
             "outputPath": "dist/apps/nest-api",
             "package": "apps/nest-api",
             "serverlessConfig": "apps/nest-api/serverless.yml",

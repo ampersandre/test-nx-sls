@@ -18,7 +18,17 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 192
-  timeout: 10
+  timeout: 30
+  environment:
+    PG_HOST: ${env:PG_HOST}
+    PG_USERNAME: ${env:PG_USERNAME}
+    PG_PASSWORD: ${env:PG_PASSWORD}
+  vpc:
+    securityGroupIds:
+      - sg-a0b6aeee
+    subnetIds:
+      - subnet-397f2573
+
 functions:
   web-app:
     handler: handler.webApp
@@ -27,12 +37,16 @@ functions:
       - http: ANY /
   migrations-up:
     handler: sequelize/migration-runner.migrationsUp
+    package:
+      patterns:
+        - migrations/**
   migrations-down:
     handler: sequelize/migration-runner.migrationsDown
+    package:
+      patterns:
+        - migrations/**
   migrations-status:
     handler: sequelize/migration-runner.migrationsStatus
-
-environment:
-  PG_HOST: ${env:PG_HOST}
-  PG_USERNAME: ${env:PG_USERNAME}
-  PG_PASSWORD: ${env:PG_PASSWORD}
+    package:
+      patterns:
+        - migrations/**
