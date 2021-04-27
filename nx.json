@@ -14,6 +14,7 @@
   "projects": {
     "sample": { "tags": [] },
     "sample-e2e": { "tags": [], "implicitDependencies": ["sample"] },
-    "myapi": { "tags": [] }
+    "myapi": { "tags": [] },
+    "nest-api": { "tags": [] }
   }
 }
